@@ -127,70 +127,13 @@ multiprocesses = []
 numThreads = 1
 
 process = ""
+benchmarks = []
 
 if options.bench:
-    if options.bench == 'perlbench':
-        process = Mybench.perlbench
-    elif options.bench == 'bzip2':
-        process = Mybench.bzip2
-    elif options.bench == 'gcc':
-        process = Mybench.gcc
-    elif options.bench == 'bwaves':
-        process = Mybench.bwaves
-    elif options.bench == 'gamess':
-        process = Mybench.gamess
-    elif options.bench == 'mcf':
-        process = Mybench.mcf
-    elif options.bench == 'milc':
-        process = Mybench.milc
-    elif options.bench == 'zeusmp':
-        process = Mybench.zeusmp
-    elif options.bench == 'gromacs':
-        process = Mybench.gromacs
-    elif options.bench == 'cactusADM':
-        process = Mybench.cactusADM
-    elif options.bench == 'leslie3d':
-        process = Mybench.leslie3d
-    elif options.bench == 'namd':
-        process = Mybench.namd
-    elif options.bench == 'gobmk':
-        process = Mybench.gobmk;
-    elif options.bench == 'dealII':
-        process = Mybench.dealII
-    elif options.bench == 'soplex':
-        process = Mybench.soplex
-    elif options.bench == 'povray':
-        process = Mybench.povray
-    elif options.bench == 'calculix':
-        process = Mybench.calculix
-    elif options.bench == 'hmmer':
-        process = Mybench.hmmer
-    elif options.bench == 'sjeng':
-        process = Mybench.sjeng
-    elif options.bench == 'GemsFDTD':
-        process = Mybench.GemsFDTD
-    elif options.bench == 'libquantum':
-        process = Mybench.libquantum
-    elif options.bench == 'h264ref':
-        process = Mybench.h264ref
-    elif options.bench == 'tonto':
-        process = Mybench.tonto
-    elif options.bench == 'lbm':
-        process = Mybench.lbm
-    elif options.bench == 'omnetpp':
-        process = Mybench.omnetpp
-    elif options.bench == 'astar':
-        process = Mybench.astar
-    elif options.bench == 'wrf':
-        process = Mybench.wrf
-    elif options.bench == 'sphinx3':
-        process = Mybench.sphinx3
-    elif options.bench == 'xalancbmk':
-        process = Mybench.xalancbmk
-    elif options.bench == 'specrand_i':
-        process = Mybench.specrand_i
-    elif options.bench == 'specrand_f':
-        process = Mybench.specrand_f
+    benchmarks=options.bench.split(",")
+
+    for i in range(len(benchmarks)):
+        multiprocesses.append(Mybench.benchmarks[benchmarks[i]])
 
 elif options.cmd:
     multiprocesses, numThreads = get_processes(options)
@@ -206,7 +149,13 @@ CPUClass.numThreads = numThreads
 if options.smt and options.num_cpus > 1:
     fatal("You cannot use SMT with multiple CPUs!")
 
-np = options.num_cpus
+np = 0
+if len(benchmarks) > 0:
+    np = len(benchmarks)
+    options.num_cpus = np
+elif options.num_cpus:
+    np = options.num_cpus
+
 system = System(cpu = [CPUClass(cpu_id=i) for i in xrange(np)],
                 mem_mode = test_mem_mode,
                 mem_ranges = [AddrRange(options.mem_size)],
@@ -247,7 +196,7 @@ if options.simpoint_profile:
         fatal("SimPoint generation not supported with more than one CPUs")
 
 for i in xrange(np):
-    multiprocesses.append(process)
+    #multiprocesses.append(process)
     if options.smt:
         system.cpu[i].workload = multiprocesses
     elif len(multiprocesses) == 1:
