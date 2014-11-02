@@ -19,7 +19,7 @@ import MemConfig
 from Caches import *
 from cpu2000 import *
 
-cpu2006_dir = "/home/mbrown/teaching/cda5155/CPU2006v1.0.1/benchspec/CPU2006/"
+cpu2006_dir = os.environ["M5_HOME"] + "/CPU2006v1.0.1/benchspec/CPU2006/"
 
 #400.perlbench
 perlbench = LiveProcess()
