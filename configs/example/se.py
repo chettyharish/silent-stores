@@ -130,10 +130,17 @@ process = ""
 benchmarks = []
 
 if options.bench:
-    benchmarks=options.bench.split(",")
+    if options.bench == "help":
+        for benchmark in Mybench.benchmarks:
+            print benchmark
 
-    for i in range(len(benchmarks)):
-        multiprocesses.append(Mybench.benchmarks[benchmarks[i]])
+        sys.exit(0)
+
+    else:
+        benchmarks=options.bench.split(",")
+
+        for i in range(len(benchmarks)):
+            multiprocesses.append(Mybench.benchmarks[benchmarks[i]])
 
 elif options.cmd:
     multiprocesses, numThreads = get_processes(options)
