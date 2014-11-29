@@ -165,8 +165,20 @@ Cache<TagStore>::satisfyCpuSideRequest(PacketPtr pkt, BlkType *blk,
         cmpAndSwap(blk, pkt);
     } else if (pkt->isWrite()) {
         if (blk->checkWrite(pkt)) {
+//            std::stringstream strStream1 (std::stringstream::in | std::stringstream::out);
+//            for (int i=0; i < blkSize; i++)
+//            	strStream1 << (int)*(blk->data + i) << " ";
+//            DPRINTF(Cache, "BF Block :%x %s %s\n" ,tags->regenerateBlkAddr(blk->tag, blk->set),
+//            		__func__,strStream1.str());
+
             pkt->writeDataToBlock(blk->data, blkSize);
             blk->status |= BlkDirty;
+
+//            std::stringstream strStream2 (std::stringstream::in | std::stringstream::out);
+//            for (int i=0; i < blkSize; i++)
+//            	strStream2 << (int)*(blk->data + i) << " ";
+//            DPRINTF(Cache, "AF Block :%x %s %s\n" ,tags->regenerateBlkAddr(blk->tag, blk->set),
+//            		__func__,strStream1.str());
         }
     } else if (pkt->isRead()) {
         if (pkt->isLLSC()) {
@@ -1223,6 +1235,10 @@ Cache<TagStore>::allocateBlock(Addr addr, bool is_secure,
                     blk->isDirty() ? "writeback" : "clean");
 
             if (blk->isDirty()) {
+//                std::stringstream strStream1 (std::stringstream::in | std::stringstream::out);
+//                for (int i=0; i < blkSize; i++)
+//                	strStream1 << (int)*(blk->data + i) << " ";
+//                DPRINTF(Cache, "Block :%x %s %s\n" , repl_addr, "writeBack",strStream1.str());
                 // Save writeback packet for handling by caller
                 writebacks.push_back(writebackBlk(blk));
             }

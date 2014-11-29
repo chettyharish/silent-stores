@@ -292,11 +292,13 @@ Export('UnitTest')
 # Debug Flags
 #
 debug_flags = {}
+
 def DebugFlag(name, desc=None):
     if name in debug_flags:
         raise AttributeError, "Flag %s already specified" % name
     debug_flags[name] = (name, (), desc)
-
+DebugFlag('mf1')
+DebugFlag('mf2')
 def CompoundFlag(name, flags, desc=None):
     if name in debug_flags:
         raise AttributeError, "Flag %s already specified" % name
@@ -1024,7 +1026,7 @@ ccflags = {'debug' : [], 'opt' : ['-g'], 'fast' : [], 'prof' : ['-g', '-pg'],
 # prof, and -lprofiler for perf. The -lprofile flag is surrounded by
 # no-as-needed and as-needed as the binutils linker is too clever and
 # simply doesn't link to the library otherwise.
-ldflags = {'debug' : [], 'opt' : [], 'fast' : [], 'prof' : ['-pg'],
+ldflags = {'debug' : ['-ldl', '-lutil' , '-Wl,--no-as-needed'], 'opt' : [], 'fast' : [], 'prof' : ['-pg'],
            'perf' : ['-Wl,--no-as-needed', '-lprofiler', '-Wl,--as-needed']}
 
 # For Link Time Optimization, the optimisation flags used to compile
@@ -1153,3 +1155,5 @@ envSetup = env.MakeEnvirons(environs, isa_target)
 env.Depends(isa_target, '#all-isas')
 # likewise for -environs targets and all the -deps targets
 env.Depends(environs, '#all-deps')
+
+

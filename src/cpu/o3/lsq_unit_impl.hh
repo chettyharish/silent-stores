@@ -58,6 +58,7 @@
 #include "debug/O3PipeView.hh"
 #include "mem/packet.hh"
 #include "mem/request.hh"
+#include "debug/mf1.hh"
 
 template<class Impl>
 LSQUnit<Impl>::WritebackEvent::WritebackEvent(DynInstPtr &_inst, PacketPtr _pkt,
@@ -866,6 +867,15 @@ LSQUnit<Impl>::writebackStores()
             delete req;
             req = sreqLow;
         }
+
+		std::ofstream myfile ("/home/chettyharish/Downloads/Store.txt", std::ios::out | std::ios::app );
+		std::ostringstream bl_addr;
+
+		bl_addr << std::hex <<(req->getPaddr());
+		myfile.is_open();
+		myfile << "Addr : 0x" <<bl_addr.str()<<"\n";
+		myfile << "Data : 0x"<<(int)*(inst->memData) <<"\n";
+		myfile.close();
 
         DPRINTF(LSQUnit, "D-Cache: Writing back store idx:%i PC:%s "
                 "to Addr:%#x, data:%#x [sn:%lli]\n",

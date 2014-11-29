@@ -55,6 +55,8 @@
 #include <bitset>
 #include <cassert>
 #include <list>
+#include <iostream>
+#include <fstream>
 
 #include "base/cast.hh"
 #include "base/compiler.hh"
@@ -64,6 +66,7 @@
 #include "base/types.hh"
 #include "mem/request.hh"
 #include "sim/core.hh"
+#include "debug/mf2.hh"
 
 class Packet;
 typedef Packet *PacketPtr;
@@ -421,7 +424,7 @@ class Packet : public Printable
                        const std::string &prefix = "  ");
 
         /**
-         * Pop a label off the label stack.
+         * Pop a label off the label stack.get
          */
         void popLabel();
 
@@ -855,6 +858,27 @@ class Packet : public Printable
     void
     writeData(uint8_t *p)
     {
+
+		std::ofstream myfile ("/home/chettyharish/Downloads/Cache.txt", std::ios::out | std::ios::app );
+		std::stringstream bl_data (std::stringstream::in | std::stringstream::out);
+		std::ostringstream bl_addr;
+
+		bl_addr << std::hex <<(req->getPaddr());
+
+		for (int i=0; i < getSize(); i++)
+			bl_data << (int)*(p + i) << "\t";
+		bl_data << "\n";
+
+		for(int i=0;i<getSize();i++)
+			bl_data << (int)*(getPtr<uint8_t>() + i) <<"\t";
+		bl_data << "\n";
+
+		myfile.is_open();
+		myfile << "Addr : 0x" <<bl_addr.str()<<"\n";
+		myfile << "Size :\t"<<getSize() <<"\n";
+		myfile<<bl_data.str();
+		myfile.close();
+
         std::memcpy(p, getPtr<uint8_t>(), getSize());
     }
 

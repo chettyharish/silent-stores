@@ -123,9 +123,10 @@ Trace::ExeTracerRecord::traceInst(StaticInstPtr inst, bool ran)
             ccprintf(outs, " D=%#018x", data.as_int);
         }
 
-        if (Debug::ExecEffAddr && addr_valid)
+        if (Debug::ExecEffAddr && addr_valid){
             outs << " A=0x" << hex << addr;
 
+        }
         if (Debug::ExecFetchSeq && fetch_seq_valid)
             outs << "  FetchSeq=" << dec << fetch_seq;
 
