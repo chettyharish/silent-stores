@@ -2,7 +2,6 @@
 import subprocess
 import time
 import datetime
-import pickle
 import matplotlib.pyplot as plt
 from operator import itemgetter
 
