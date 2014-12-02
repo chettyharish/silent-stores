@@ -154,7 +154,7 @@ def script_runner():
     p = subprocess.Popen(command2, shell=True)
     p.wait()
 
-    benhmarks = ["bzip2",
+    benchmarks = ["bzip2",
                 "namd",
                 "libquantum",
                 "gamess",
