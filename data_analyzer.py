@@ -151,8 +151,6 @@ def script_runner():
     command3 = "cat /dev/null > /home/chettyharish/Downloads/Cache.txt"
     command4 = "cat /dev/null > /home/chettyharish/Downloads/Store.txt"
 
-    p = subprocess.Popen(command1, shell=True)
-    p.wait()
     p = subprocess.Popen(command2, shell=True)
     p.wait()
 
