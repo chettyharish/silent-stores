@@ -142,11 +142,9 @@ def data_analyzer(start_time, bench, processor, l1_size, l1_assoc, line_size):
 
 
 def script_runner():
-    bench, processor, l1_size, l1_assoc, line_size = (
-        "soplex", "X86", "32", "1", "64")
+    processor = "ARM"
     start_time = time.time()
 
-#     command1 = "cat /dev/null > /home/chettyharish/Downloads/op.txt"
     command2 = "echo \"Configuration\tTotal\tSilent\tRatio\tSilentB\tTotalB\tRatio\" > /home/chettyharish/Downloads/op.txt"
     command3 = "cat /dev/null > /home/chettyharish/Downloads/Cache.txt"
     command4 = "cat /dev/null > /home/chettyharish/Downloads/Store.txt"
@@ -154,7 +152,8 @@ def script_runner():
     p = subprocess.Popen(command2, shell=True)
     p.wait()
 
-    benchmarks = ["bzip2",
+    benchmarks = [
+                "bzip2", 
                 "namd",
                 "libquantum",
                 "gamess",
@@ -164,15 +163,12 @@ def script_runner():
                 "sjeng",
                 "gcc",
                 "hmmer",
-                #"astar",
-                #"h264ref",
                 "milc",
                 "perlbench",
                 "povray",
-                #"bwaves",
                 "soplex",
                 "lbm",
-                "gobmk",
+                "gobmk"
                 ]
 
     for bench_mark in benchmarks: 
@@ -185,7 +181,7 @@ def script_runner():
                     p = subprocess.Popen(command4, shell=True)
                     p.wait()
                     try:
-                        build_cmd = ("build/X86/gem5.debug configs/example/se.py --cpu-type=detailed" +
+                        build_cmd = ("build/ARM/gem5.debug configs/example/se.py --cpu-type=detailed" +
                                      " --bench="+bench_mark+" --caches --l1d_size=" +
                                      str(l1_size) + "kB --l1d_assoc="
                                      + str(l1_assoc) + " --cacheline_size=" + str(line_size))
