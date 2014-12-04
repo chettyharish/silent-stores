@@ -4,6 +4,7 @@ import time
 import datetime
 import matplotlib
 matplotlib.use("Agg")
+import linecache
 import matplotlib.pyplot as plt
 from operator import itemgetter
 
@@ -15,25 +16,28 @@ def printTimeStatement(start_time):
 
 def data_analyzer(start_time, bench, processor, l1_size, l1_assoc, line_size):
     printTimeStatement(start_time)
-    Storefile = [
-        line for line in open("/home/chettyharish/Downloads/Store.txt")]
-    Cachefile = [
-        line for line in open("/home/chettyharish/Downloads/Cache.txt")]
-
+#     Storefile = [
+#         line for line in open("/home/chettyharish/Downloads/Store.txt")]
+#     Cachefile = [
+#         line for line in open("/home/chettyharish/Downloads/Cache.txt")]
+    Storefile = "/home/chettyharish/Downloads/Store.txt"
+    Cachefile = "/home/chettyharish/Downloads/Cache.txt"
     silent_stores = 0.0
     silent_bytes = []
     total_stores = 0.0
     i = 0
     j = 0
     while i < len(Storefile):
-        addr1 = Storefile[i].split(":")[1]
+        #addr1 = Storefile[i].split(":")[1]
+        addr1 = linecache.getline(Storefile, i).split(":")[1]
         while j < len(Cachefile):
-            addr2 = Cachefile[j].split(":")[1]
+#             addr2 = Cachefile[j].split(":")[1]
+            addr2 = linecache.getline(Cachefile, i).split(":")[1]
             if addr1 == addr2:
                 cnt1 = 0
-                size = int(Cachefile[j + 1].split(":")[1])
-                bfdata = Cachefile[j + 2].split("\t")
-                afdata = Cachefile[j + 3].split("\t")
+                size = int(linecache.getline(Cachefile, j + 1).split(":")[1])
+                bfdata = linecache.getline(Cachefile, j + 2).split("\t")
+                afdata = linecache.getline(Cachefile, j + 3).split("\t")
 
                 for k in range(size):
                     if int(bfdata[k]) == int(afdata[k]):
@@ -46,7 +50,7 @@ def data_analyzer(start_time, bench, processor, l1_size, l1_assoc, line_size):
                 else:
                     total_stores += 1
                     silent_bytes.append((j, size, cnt1))
-
+                linecache.clearcache()
                 j += 4
                 break
             else:
