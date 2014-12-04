@@ -142,7 +142,7 @@ def data_analyzer(start_time, bench, processor, l1_size, l1_assoc, line_size):
 
 
 def script_runner():
-    processor = "ARM"
+    processor = "X86"
     start_time = time.time()
 
     command2 = "echo \"Configuration\tTotal\tSilent\tRatio\tSilentB\tTotalB\tRatio\" > /home/chettyharish/Downloads/op.txt"
@@ -153,22 +153,22 @@ def script_runner():
     p.wait()
 
     benchmarks = [
-                "bzip2", 
-                "namd",
-                "libquantum",
-                "gamess",
-                "omnetpp",
-                "mcf",
-                "specrand_i",
-                "sjeng",
-                "gcc",
-                "hmmer",
-                "milc",
-                "perlbench",
-                "povray",
-                "soplex",
-                "lbm",
-                "gobmk"
+#                 "bzip2", 
+#                 "namd",
+#                 "libquantum",
+#                 "gamess",
+#                 "omnetpp",
+#                 "mcf",
+#                 "specrand_i",
+#                 "sjeng",
+#                 "gcc",
+#                 "hmmer",
+#                 "milc",
+#                 "perlbench",
+#                 "povray",
+#                 "soplex",
+#                 "lbm",
+#                 "gobmk"
                 ]
 
     for bench_mark in benchmarks: 
@@ -181,7 +181,7 @@ def script_runner():
                     p = subprocess.Popen(command4, shell=True)
                     p.wait()
                     try:
-                        build_cmd = ("build/ARM/gem5.debug configs/example/se.py --cpu-type=detailed" +
+                        build_cmd = ("build/X86/gem5.debug configs/example/se.py --cpu-type=detailed" +
                                      " --bench="+bench_mark+" --caches --l1d_size=" +
                                      str(l1_size) + "kB --l1d_assoc="
                                      + str(l1_assoc) + " --cacheline_size=" + str(line_size))
