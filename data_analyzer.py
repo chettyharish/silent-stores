@@ -8,6 +8,7 @@ import linecache
 import matplotlib.pyplot as plt
 from operator import itemgetter
 import itertools
+from itertools import islice
 
 def printTimeStatement(start_time):
     print("Current Time : {0}    Time Elapsed : {1} minutes".
@@ -42,14 +43,14 @@ def data_analyzer_smart(start_time, bench, processor, l1_size, l1_assoc, line_si
     count = 0
 
     with open(Storetxt, 'r') as infile:
-        Storefile = islice(infile, 2)
+        Storefile = [x for x in islice(infile, 2)]
         addr1 = Storefile[0].split(":")[1]
         with open(Cachetxt, "r") as infile2:
-            Cachefile = islice(infile2 , 4)
+            Cachefile = [x for x in islice(infile2 , 4)]
             addr2 = Cachefile[0].split(":")[1]
             if addr1 == addr2:
                 cnt1 = 0
-                size = int(Cachefile[1]).split(":")[1]
+                size = int(Cachefile[1].split(":")[1])
                 bfdata = Cachefile[2].split("\t")
                 afdata = Cachefile[3].split("\t")
                 for k in range(size):
@@ -65,6 +66,11 @@ def data_analyzer_smart(start_time, bench, processor, l1_size, l1_assoc, line_si
                 total_stores_byte += cnt1
                 
                 if i % sampling_obs == 0:
+                    if cnt1 == size:
+                        if cnt1 == size == 0:
+                            y1.append(1)
+                        else:
+                            y1.append(0)
                     y2.append(float(cnt1/size))
 
                 if (cnt1 == size) == curr:
@@ -133,23 +139,27 @@ def data_analyzer_smart(start_time, bench, processor, l1_size, l1_assoc, line_si
         plt.savefig("/home/chettyharish/Downloads/" + config_string + ".png")
         
         
+        opstring = "\n".join(
+            [str(x[0])+"\t"+str(x[1])+"\t"+str(x[2]) 
+             for x in sorted(rle_list, key=itemgetter(2), reverse=True)[0:200]])
+        outputfile = open(
+            "/home/chettyharish/Downloads/" + config_string + ".txt", "w")
+        outputfile.write(
+            "Total\t" + str(total_stores) + "\t" + str(silent_stores) + "\n")
+        outputfile.write(opstring)
+        outputfile.close()
+    else:
+        print("There was an EXCEPTION")
+    return
         
-        
-        
-        
-        
-        
-        
-        
-        
+
 def data_analyzer(start_time, bench, processor, l1_size, l1_assoc, line_size):
     printTimeStatement(start_time)
     Storefile = [
         line for line in open("/home/chettyharish/Downloads/Store.txt")]
     Cachefile = [
         line for line in open("/home/chettyharish/Downloads/Cache.txt")]
-    Storefile = "/home/chettyharish/Downloads/Store.txt"
-    Cachefile = "/home/chettyharish/Downloads/Cache.txt"
+
     silent_stores = 0.0
     silent_bytes = []
     total_stores = 0.0
@@ -161,9 +171,9 @@ def data_analyzer(start_time, bench, processor, l1_size, l1_assoc, line_size):
             addr2 = Cachefile[j].split(":")[1]
             if addr1 == addr2:
                 cnt1 = 0
-                size = int(Cachefile[j+1]).split(":")[1]
-                bfdata = Cachefile[j+2].split("\t")
-                afdata = Cachefile[j+3].split("\t")
+                size = int(Cachefile[j + 1].split(":")[1])
+                bfdata = Cachefile[j + 2].split("\t")
+                afdata = Cachefile[j + 3].split("\t")
 
                 for k in range(size):
                     if int(bfdata[k]) == int(afdata[k]):
@@ -176,7 +186,7 @@ def data_analyzer(start_time, bench, processor, l1_size, l1_assoc, line_size):
                 else:
                     total_stores += 1
                     silent_bytes.append((j, size, cnt1))
-                linecache.clearcache()
+
                 j += 4
                 break
             else:
@@ -245,8 +255,21 @@ def data_analyzer(start_time, bench, processor, l1_size, l1_assoc, line_size):
         #
         ##############################
         printTimeStatement(start_time)
+        silent_store = [1 if ele[1] == ele[2] else 0 for ele in silent_bytes]
+        rle_list = []
+        curr = -1
+        count = 0
+        for i, ele in enumerate(silent_store):
+            if ele == curr:
+                count += 1
+            else:
+                rle_list.append((i, str(curr), str(count)))
+                curr = ele
+                count = 1
+    
         opstring = "\n".join(
-            [str(x[0])+"\t"+str(x[1])+"\t"+str(x[2]) for x in rle_list])
+            [str(x[0])+"\t"+str(x[1])+"\t"+str(x[2]) 
+             for x in sorted(rle_list, key=itemgetter(2), reverse=True)[0:200]])
         outputfile = open(
             "/home/chettyharish/Downloads/" + config_string + ".txt", "w")
         outputfile.write(
