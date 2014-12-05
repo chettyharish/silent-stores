@@ -21,11 +21,16 @@ def data_analyzer_smart(start_time, bench, processor, l1_size, l1_assoc, line_si
     Storetxt = "/home/chettyharish/Downloads/Store.txt"
     Cachetxt = "/home/chettyharish/Downloads/Cache.txt"
     
+
     total_obs = 0.0
-    with open(Storetxt, 'r') as infile:
-        total_obs +=1
-    total_obs = total_obs / 2.0
+    p = subprocess.Popen(['wc', '-l', Storetxt], stdout=subprocess.PIPE, 
+                                              stderr=subprocess.PIPE)
+    result, err = p.communicate()
+    total_obs = int(result.strip().split()[0])
+
+    total_obs = total_obs / 2
     sampling_obs = int(total_obs / 500.0)
+    print(total_obs , sampling_obs)
     silent_stores = 0.0
     silent_bytes = 0.0
     total_stores = 0.0
@@ -41,49 +46,52 @@ def data_analyzer_smart(start_time, bench, processor, l1_size, l1_assoc, line_si
     rle_list = []
     curr = -1
     count = 0
+    nt = 0
+    with open(Storetxt, 'r') as infile , open(Cachetxt, 'r') as infile2:
+        while True:
+            nt += 1
+            Storefile = list(islice(infile, 2))
+            if not Storefile:
+                break
+            addr1 = Storefile[0].split(":")[1]
+            while True:
+                Cachefile = list(islice(infile2 , 4))
+                addr2 = Cachefile[0].split(":")[1]
+                if addr1 == addr2:
+                    break
 
-    with open(Storetxt, 'r') as infile:
-        Storefile = [x for x in islice(infile, 2)]
-        addr1 = Storefile[0].split(":")[1]
-        with open(Cachetxt, "r") as infile2:
-            Cachefile = [x for x in islice(infile2 , 4)]
-            addr2 = Cachefile[0].split(":")[1]
-            if addr1 == addr2:
-                cnt1 = 0
-                size = int(Cachefile[1].split(":")[1])
-                bfdata = Cachefile[2].split("\t")
-                afdata = Cachefile[3].split("\t")
-                for k in range(size):
-                    if int(bfdata[k]) == int(afdata[k]):
-                        cnt1 += 1
+            cnt1 = 0
+            size = int(Cachefile[1].split(":")[1])
+            bfdata = Cachefile[2].split("\t")
+            afdata = Cachefile[3].split("\t")
+            for k in range(size):
+                if int(bfdata[k]) == int(afdata[k]):
+                    cnt1 += 1
 
+            if cnt1 == size:
+                silent_stores += 1
+            silent_bytes += cnt1
+            total_stores += 1
+            total_stores_byte += size
+            
+            if i % sampling_obs == 0:
                 if cnt1 == size:
-                    silent_stores += 1
-                    if i % sampling_obs == 0:
-                        y1.append(1)
-                silent_bytes += cnt1
-                total_stores += 1
-                total_stores_byte += cnt1
-                
-                if i % sampling_obs == 0:
-                    if cnt1 == size:
-                        if cnt1 == size == 0:
-                            y1.append(1)
-                        else:
-                            y1.append(0)
-                    y2.append(float(cnt1/size))
-
-                if (cnt1 == size) == curr:
-                    count += 1
+                    y1.append(1)
                 else:
-                    rle_list.append((i, str(curr), str(count)))
-                    rle_list = sorted(rle_list, key=itemgetter(2), reverse=True)[0:200]
-                    curr = cnt1 == size
-                    count = 1
-            else:
-                j += 4
-            i += 1
+                    y1.append(0)
+                y2.append(float(float(cnt1)/float(size)))
+            
 
+            if (cnt1 == size) == curr:
+                count += 1
+            else:
+                rle_list.append((i, str(curr), str(count)))
+                rle_list = sorted(rle_list, key=itemgetter(2), reverse=True)[0:200]
+                curr = cnt1 == size
+                count = 1
+            i += 1 
+    print(nt)
+    print(total_stores)
     if silent_bytes != 0:
         ##############################
         #    FINAL STATS HERE
@@ -106,20 +114,10 @@ def data_analyzer_smart(start_time, bench, processor, l1_size, l1_assoc, line_si
         #
         ##############################
         printTimeStatement(start_time)
-        x1 = []
-
-        i = 0
-
-    
-        while i < total_obs:
-            if silent_bytes[i][1] == silent_bytes[i][2]:
-                y1.append(1)
-            else:
-                y1.append(0)
-            y2.append(float(silent_bytes[i][2]) / float(silent_bytes[i][1]))
-            i += sampling_obs
-    
         x1 = [i for i in range(len(y1))]
+        print(len(x1) , len(y1) , len(y2))
+        print(y1)
+        print(y2)
         fig = plt.figure(figsize=(22, 12), dpi = 110)
         ax0 = plt.subplot(211)
         ax0.plot(x1, y1)
@@ -193,7 +191,7 @@ def data_analyzer(start_time, bench, processor, l1_size, l1_assoc, line_size):
                 j += 4
         i += 2
 
-
+    print(total_stores)
     if len(silent_bytes) != 0:
         ##############################
         #    FINAL STATS HERE
@@ -337,4 +335,5 @@ def script_runner():
 
 if __name__ == "__main__":
 #     script_runner()
-    data_analyzer_smart(time.time(),"hmmr","X86","8kB","4","64")
+#     data_analyzer(time.time(),"hmmrDumb","X86","8kB","4","64")
+    data_analyzer_smart(time.time(),"hmmrSmar","X86","8kB","4","64")
