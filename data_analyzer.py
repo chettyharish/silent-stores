@@ -17,7 +17,6 @@ def printTimeStatement(start_time):
 
 
 def data_analyzer_smart(start_time, bench, processor, l1_size, l1_assoc, line_size):
-    printTimeStatement(start_time)
     Storetxt = "/home/chettyharish/Downloads/Store.txt"
     Cachetxt = "/home/chettyharish/Downloads/Cache.txt"
     
@@ -85,13 +84,11 @@ def data_analyzer_smart(start_time, bench, processor, l1_size, l1_assoc, line_si
             if (cnt1 == size) == curr:
                 count += 1
             else:
-                rle_list.append((i, str(curr), str(count)))
+                rle_list.append((i, str(int(curr)), str(count)))
                 rle_list = sorted(rle_list, key=itemgetter(2), reverse=True)[0:200]
                 curr = cnt1 == size
                 count = 1
             i += 1 
-    print(nt)
-    print(total_stores)
     if silent_bytes != 0:
         ##############################
         #    FINAL STATS HERE
@@ -115,9 +112,6 @@ def data_analyzer_smart(start_time, bench, processor, l1_size, l1_assoc, line_si
         ##############################
         printTimeStatement(start_time)
         x1 = [i for i in range(len(y1))]
-        print(len(x1) , len(y1) , len(y2))
-        print(y1)
-        print(y2)
         fig = plt.figure(figsize=(22, 12), dpi = 110)
         ax0 = plt.subplot(211)
         ax0.plot(x1, y1)
@@ -191,7 +185,6 @@ def data_analyzer(start_time, bench, processor, l1_size, l1_assoc, line_size):
                 j += 4
         i += 2
 
-    print(total_stores)
     if len(silent_bytes) != 0:
         ##############################
         #    FINAL STATS HERE
