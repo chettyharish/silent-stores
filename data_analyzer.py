@@ -84,7 +84,7 @@ def data_analyzer_smart(start_time, bench, processor, l1_size, l1_assoc, line_si
                 j += 4
             i += 1
 
-    if len(silent_bytes) != 0:
+    if silent_bytes != 0:
         ##############################
         #    FINAL STATS HERE
         #
