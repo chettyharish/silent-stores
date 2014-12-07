@@ -290,16 +290,16 @@ def script_runner():
 #                 "gamess",
 #                 "omnetpp",
 #                 "mcf",
-#                 "specrand_i",
+                 "specrand_i",
 #                 "sjeng",
 #                 "gcc",
 #                 "hmmer",
 #                 "milc",
 #                 "perlbench",
-#                 "povray",
-#                 "soplex",
+                 "povray",
+                 "soplex",
 #                 "lbm",
-#                 "gobmk"
+                 "gobmk"
                 ]
 
     for bench_mark in benchmarks: 
