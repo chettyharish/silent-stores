@@ -43,6 +43,7 @@ def data_analyzer_smart(start_time, bench, processor, l1_size, l1_assoc, line_si
     
     #For RLE
     rle_list = []
+    rle_list2 = []
     curr = -1
     count = 0
     nt = 0
@@ -86,6 +87,9 @@ def data_analyzer_smart(start_time, bench, processor, l1_size, l1_assoc, line_si
             else:
                 rle_list.append((i, int(curr), int(count)))
                 rle_list = sorted(rle_list, key=itemgetter(2), reverse=True)[0:200]
+                if curr == 1:
+                    rle_list2.append((i, int(curr), int(count)))
+                    rle_list2 = sorted(rle_list2, key=itemgetter(2), reverse=True)[0:200]
                 curr = cnt1 == size
                 count = 1
             i += 1 
@@ -136,6 +140,16 @@ def data_analyzer_smart(start_time, bench, processor, l1_size, l1_assoc, line_si
              for x in rle_list])
         outputfile = open(
             "/home/chettyharish/Downloads/" + config_string + ".txt", "w")
+        outputfile.write(
+            "Total\t" + str(total_stores) + "\t" + str(silent_stores) + "\n")
+        outputfile.write(opstring)
+        outputfile.close()
+        
+        opstring = "\n".join(
+            [str(x[0])+"\t"+str(x[1])+"\t"+str(x[2]) 
+             for x in rle_list2])
+        outputfile = open(
+            "/home/chettyharish/Downloads/" + config_string + "T.txt", "w")
         outputfile.write(
             "Total\t" + str(total_stores) + "\t" + str(silent_stores) + "\n")
         outputfile.write(opstring)
@@ -319,7 +333,7 @@ def script_runner():
                         p = subprocess.Popen(build_cmd, shell=True)
                         p.wait()
                         print(build_cmd)
-                        data_analyzer(
+                        data_analyzer_smart(
                             start_time, bench_mark, processor, l1_size, l1_assoc, line_size)
                         print()
                     except:
