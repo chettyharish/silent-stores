@@ -84,7 +84,7 @@ def data_analyzer_smart(start_time, bench, processor, l1_size, l1_assoc, line_si
             if (cnt1 == size) == curr:
                 count += 1
             else:
-                rle_list.append((i, str(int(curr)), str(count)))
+                rle_list.append((i, int(curr), int(count)))
                 rle_list = sorted(rle_list, key=itemgetter(2), reverse=True)[0:200]
                 curr = cnt1 == size
                 count = 1
@@ -133,7 +133,7 @@ def data_analyzer_smart(start_time, bench, processor, l1_size, l1_assoc, line_si
         
         opstring = "\n".join(
             [str(x[0])+"\t"+str(x[1])+"\t"+str(x[2]) 
-             for x in sorted(rle_list, key=itemgetter(2), reverse=True)[0:200]])
+             for x in rle_list])
         outputfile = open(
             "/home/chettyharish/Downloads/" + config_string + ".txt", "w")
         outputfile.write(
